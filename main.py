@@ -1,12 +1,23 @@
+import os
+
+from ml.w2v import build_model, save_model, print_model, get_words
 from preprocessing.reading import filereader
-from preprocessing.tokenizing import tokenizer
-from preprocessing.writing import filewriter
+from preprocessing.sentence_splitter import sentence_splitter
 
 
 def main():
-    text = filereader("Data/Fofi/prefazione.txt")
-    tokenized_text = tokenizer(text)
-    filewriter(tokenized_text, "Tokenized_Data/Fofi/prefazione.txt")
+    text = ""
+    author = "Fofi"
+    data_folder = "Data"
+    for filename in os.listdir(os.path.join(data_folder, author)):
+        text = text + filereader(os.path.join(data_folder, author, filename))
+
+    sentences = sentence_splitter(text)
+
+    model = build_model(sentences)
+    print_model(model)
+    print(get_words(model))
+    save_model(model, os.path.join("Models", author + ".bin"))
 
 
 if __name__ == "__main__":
